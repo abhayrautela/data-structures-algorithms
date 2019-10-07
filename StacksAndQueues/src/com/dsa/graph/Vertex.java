@@ -1,82 +1,84 @@
 package com.dsa.graph;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Vertex {
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((label == null) ? 0 : label.hashCode());
-		return result;
-	}
+    private String label;
+    private int index;
+    private Set<Edge> adj;
+    private float cumulativeOwnership;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Vertex other = (Vertex) obj;
-		if (label == null) {
-			if (other.label != null)
-				return false;
-		} else if (!label.equals(other.label))
-			return false;
-		return true;
-	}
+    public Vertex(String label, int index) {
+        this.label = label;
+        this.index = index;
+        this.adj = new TreeSet<>(new Comparator<Edge>() {
+            @Override
+            public int compare(Edge v1, Edge v2) {
+                if (v1.getDestination().getIndex() < v2.getDestination().getIndex()) {
+                    return -1;
+                } else if (v1.getDestination().getIndex() > v2.getDestination().getIndex()) {
+                    return 1;
+                }
+                return 0;
+            }
+        });
+    }
 
-	private String label;
-	private int index;
-	private List<Vertex> adj;
-	private boolean isVisited;
-	private int cumulativeShortestPath;
+    @Override
+    public String toString() {
+        return "Vertex{" +
+                "label='" + label + '\'' +
+                ", index=" + index +
+                ", adj=" + adj +
+                ", cumulativeOwnership=" + cumulativeOwnership +
+                '}';
+    }
 
-	public Vertex(String label, int index) {
-		this.label = label;
-		this.index = index;
-		this.isVisited = false;
-		this.adj = new ArrayList<Vertex>();
-	}
+    public int getIndex() {
+        return index;
+    }
 
-	public int getCumulativeShortestPath() {
-		return cumulativeShortestPath;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public void setCumulativeShortestPath(int cumulativeShortestPath) {
-		this.cumulativeShortestPath = cumulativeShortestPath;
-	}
+    public void addEdge(Vertex destination, float directOwnership) {
+        if (this.index != destination.getIndex()) {
+            Edge e = new Edge(directOwnership, this, destination);
+            this.adj.add(e);
+        }
+    }
 
-	public List<Vertex> getAdj() {
-		return adj;
-	}
+    public float getCumulativeOwnership() {
+        return cumulativeOwnership;
+    }
 
-	public int getIndex() {
-		return index;
-	}
+    public void setCumulativeOwnership(float cumulativeOwnership) {
+        this.cumulativeOwnership = cumulativeOwnership;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public Set<Edge> getAdj() {
+        return adj;
+    }
 
-	public boolean isVisited() {
-		return isVisited;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vertex vertex = (Vertex) o;
+        return index == vertex.index &&
+                Float.compare(vertex.cumulativeOwnership, cumulativeOwnership) == 0 &&
+                Objects.equals(label, vertex.label) &&
+                Objects.equals(adj, vertex.adj);
+    }
 
-	public void setVisited(boolean isVisited) {
-		this.isVisited = isVisited;
-	}
+    @Override
+    public int hashCode() {
 
-	@Override
-	public String toString() {
-		return "Vertex [label=" + label + "]";
-	}
-
-	public void display() {
-		System.out.print(label);
-	}
+        return Objects.hash(label, index, adj, cumulativeOwnership);
+    }
 }

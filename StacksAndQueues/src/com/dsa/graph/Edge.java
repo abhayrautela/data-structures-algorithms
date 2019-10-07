@@ -1,47 +1,53 @@
 package com.dsa.graph;
 
+import java.util.Objects;
+
 public class Edge {
-	private int weight;
-	private String destVertexName;
-	private int srcIndex;
-	private int destIndex;
+    private float directOwnership;
 
-	public Edge(int weight, String destVertexName, int srcIndex, int destIndex) {
-		this.weight = weight;
-		this.destVertexName = destVertexName;
-		this.srcIndex = srcIndex;
-		this.destIndex = destIndex;
-	}
+    @Override
+    public String toString() {
+        return "Edge{" +
+                "directOwnership=" + directOwnership +
+                ", source=" + source +
+                ", destination=" + destination +
+                '}';
+    }
 
-	public int getSrcIndex() {
-		return srcIndex;
-	}
+    private Vertex source;
+    private Vertex destination;
 
-	public void setSrcIndex(int srcIndex) {
-		this.srcIndex = srcIndex;
-	}
+    public Edge(float directOwnership, Vertex source, Vertex destination) {
+        this.directOwnership = directOwnership;
+        this.source = source;
+        this.destination = destination;
+    }
 
-	public int getDestIndex() {
-		return destIndex;
-	}
+    public float getDirectOwnership() {
+        return directOwnership;
+    }
 
-	public void setDestIndex(int destIndex) {
-		this.destIndex = destIndex;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Edge edge = (Edge) o;
+        return Float.compare(edge.directOwnership, directOwnership) == 0 &&
+                Objects.equals(destination, edge.destination);
+    }
 
-	public int getWeight() {
-		return weight;
-	}
+    @Override
+    public int hashCode() {
 
-	public void setWeight(int weight) {
-		this.weight = weight;
-	}
+        return Objects.hash(directOwnership, destination);
+    }
 
-	public String getDestVertexName() {
-		return destVertexName;
-	}
+    public Vertex getSource() {
+        return source;
+    }
 
-	public void setDestVertexName(String destVertexName) {
-		this.destVertexName = destVertexName;
-	}
+    public Vertex getDestination() {
+        return destination;
+    }
+
 }
